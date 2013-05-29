@@ -1,0 +1,19 @@
+#!/bin/sh
+
+ME=`basename $0`
+
+if [ $# -lt 1 ]; then
+	echo "$ME <patch_1> [..<patch_N>]"
+fi
+
+for patch in $@; do
+	git apply --check $patch
+	if [ $? -eq 0 ]; then
+		echo "Patch checks cleanly, apply: $patch"
+		git am $patch
+		if [ $? -ne 0 ]; then
+			echo "git-am failed. Stopping."
+			exit 1
+		fi
+	fi
+done

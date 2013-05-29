@@ -1,0 +1,21 @@
+#!/bin/sh
+
+DESTDIR=~/Code/git/patches
+
+if [ $# -lt 2 ]; then
+	echo "git-dir-format-patch <dir> <count> [destdir]"
+	exit 1
+fi
+
+if [ $# -eq 3 ]; then
+	DESTDIR=$3
+fi
+
+if [ ! -d $DESTDIR ]; then
+	echo "Destination directory does not exist!"
+	exit 1
+fi
+
+for sha in `git log --pretty=%H $1 | head -n $2`; do
+	git format-patch -1 -o $DESTDIR $sha
+done

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+print_usage()
+{
+	echo "Usage: git-scpchanges DESTINATION"
+	echo "-h, --help	print this help"
+}
+
+if [[ $# == 0 ]]; then
+	print_usage
+	exit 1
+elif [[ $1 == "-h" || $1 == "--help" ]]; then
+	print_usage
+	exit 0
+fi
+
+if [ ! -d .git ]; then
+	echo "Must be in top level directory."
+	exit 1
+fi
+
+echo "Copying files to $1"
+git diff --name-only | xargs -I '{}' scp '{}' $1
