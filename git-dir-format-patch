@@ -16,6 +16,10 @@ if [ ! -d $DESTDIR ]; then
 	exit 1
 fi
 
-for sha in `git log --pretty=%H $1 | head -n $2`; do
-	git format-patch -1 -o $DESTDIR $sha
+SERIESFILE=$DESTDIR/series.lst
+
+rm -f $SERIESFILE
+
+for sha in `git log $GIT_EXARGS --pretty=%H $1 | head -n $2`; do
+	git format-patch -1 -o $DESTDIR $sha | tee -a $SERIESFILE
 done

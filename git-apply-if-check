@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ME=`basename $0`
 
@@ -8,12 +8,21 @@ fi
 
 for patch in $@; do
 	git apply --check $patch
-	if [ $? -eq 0 ]; then
+	rc=$?
+	if [ $rc -eq 0 ]; then
 		echo "Patch checks cleanly, apply: $patch"
 		git am $patch
 		if [ $? -ne 0 ]; then
 			echo "git-am failed. Stopping."
 			exit 1
 		fi
+	else
+		read -p "Patch does not apply. Edit? [y/n]: " yn
+		case $yn in
+			[Yy]* ) $EDITOR $patch;
+				exit 0;;
+			[Nn]* ) exit $rc;;
+			* ) exit $rc;;
+		esac
 	fi
 done
